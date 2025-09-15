@@ -47,6 +47,27 @@ Please evaluate your system on the following questions:
 5. Rewrite the following paragraph in a professional, formal tone…
     - Aspect Tested:
 
+1. Explain the concept of object-oriented programming in simple terms to a complete beginner.
+Aspect tested: Acccuracy
+The explanation is accurate, correctly covering OOP’s core principles—classes, objects, encapsulation, inheritance, and polymorphism—without introducing factual errors or misleading simplifications.
+
+2.Read the following paragraph and provide a concise summary of the key points…
+Aspect tested: Tone
+The summary is concise but lacks emotion. It states accurately what , when or how an action is carried out, but not the why. Why bother? 
+
+3.Write a short, imaginative story (100–150 words) about a robot finding friendship in an unexpected place.
+Aspect tested: Structure
+The story is safe. The story unfolds in a predictable utopian storyline.
+
+4.If a store sells apples in packs of 4 and oranges in packs of 3, how many packs of each do I need to buy to get exactly 12 apples and 9 oranges?
+Aspect Tested:  Accuracy
+In this the model excels an is accurate.
+
+5.Rewrite the following paragraph in a professional, formal tone…
+Aspect Tested: Tone and engagement.
+In professional setting, formal tone and appropriate format are important. Large language model do well in this setting.
+
+
 This "vibe check" now serves as a baseline, of sorts, to help understand what holes your application has.
 
 #### A Note on Vibe Checking
@@ -59,6 +80,9 @@ This "vibe check" now serves as a baseline, of sorts, to help understand what ho
 
 What are some limitations of vibe checking as an evaluation tool?
 ##### ✅ Answer:
+Lack of standardisation – A “vibe check” is personal and impressionistic (e.g., “it feels beginner-friendly”), so two evaluators may reach very different conclusions for the same output.
+
+No consistent scale – Unlike formal metrics (e.g. accuracy), “vibe” has no numerical or structured basis, making it impossible to compare outputs across different models fairly.
 
 ### 🚧 Advanced Build (OPTIONAL):
 
