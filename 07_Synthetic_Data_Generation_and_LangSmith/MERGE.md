@@ -25,11 +25,9 @@ Enhanced the parent directory's `.gitignore` with comprehensive Python/Jupyter b
 
 ### Option 1: GitHub Pull Request (Recommended)
 
-1. **Create Pull Request:**
+1. **Push the branch:**
    ```bash
-   git add .
-   git commit -m "Add dependencies and update gitignore for synthetic data generation"
-   git push origin feature/synthetic-data-generation-dependencies
+   git push origin s07-assignment
    ```
 
 2. **On GitHub:**
@@ -68,9 +66,9 @@ Enhanced the parent directory's `.gitignore` with comprehensive Python/Jupyter b
 
 ```bash
 git checkout main
-git merge feature/synthetic-data-generation-dependencies
+git merge s07-assignment
 git push origin main
-git branch -d feature/synthetic-data-generation-dependencies
+git branch -d s07-assignment
 ```
 
 ## Verification
