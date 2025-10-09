@@ -19,4 +19,7 @@ dependencies = [
     "pymupdf>=1.24.0",
     "matplotlib>=3.7.0",
     "seaborn>=0.12.0",
+    "pandas>=2.3.3",
+    "openai>=1.109.1",
+    "langchain-community>=0.3.30",
 ]
