@@ -1,132 +1,53 @@
+<<<<<<< HEAD
+# 🧑‍💻 What is [AI Engineering](https://maven.com/aimakerspace/ai-eng-bootcamp)?
 
-#  Multi-Agent Notebook: Section Summary (0 – 15)
+AI Engineering refers to the industry-relevant skills that data science and engineering teams need to successfully **build, deploy, operate, and improve Large Language Model (LLM) applications in production environments**.  
 
-##  High-Level Workflow
+In practice, as of the Fall of 2025, this requires understanding both prototyping and production deployments in the following ways.
 
-```text
-┌──────────────┐
-│ PubMed / Tavily │
-└──────┬─────────┘
-       │
- [Summarise & Chunk]
-       │
-       ▼
- Vectorize Text
-       │
-┌──────────────┐
-│ Qdrant Store │
-└──────────────┘
-       │
-┌───────┴────────┐
-│ Mini-KG (SQLite) │
-└───────┬────────┘
-        │
-┌───────────┼───────────┐
-│ Retrieve & Rerank     │
-│ (Qdrant + Cohere)     │
-└───────────┼───────────┘
-        │
-        ▼
- Context to LLM [MCQ / Answer Generation]
-        ▼
-┌──────────────────────┐
-│ RAGAS (Faith., Rel., │
-│ Ctx Prec., Recall)   │
-└──────────────────────┘
+During the *prototyping* phase, Prompt Engineering, Retrieval Augmented Generation (RAG), Agents, and Fine-Tuning are all necessary tools to be able to understand and leverage. Prototyping includes:
+1. Building RAG Applications
+2. Building with Agent and Multi-Agent Frameworks
+3. Deploying LLM Prototype Applications to Users
 
-Section 0: Config - Environment Setup
-Load API keys from .env file
-Configure Tavily and stub mode settings
-Display configuration status
+When *productionizing* LLM application prototypes, there are many important aspects ensuring helpful, harmless, honest, reliable, and scalable solutions for your customers or stakeholders. Productionizing includes:
+1. Evaluating RAG and Agent Applications
+2. Improving Search and Retrieval Pipelines for Production
+3. Improving Agent and Multi-Agent Applications
+4. Monitoring Production KPIs for LLM Applications
+5. Setting up Production Endpoints for Open-Source LLMs and Embedding Models
+6. Building LLM Applications with Scalable, Production-Grade Components
+7. Understanding and Building with Agent Protocols
 
-Section 1: State Models - Typed Containers for Docs and MCQs
-Define TypedDict structures (Doc, DocWithScore, MCQ)
-Set up data models for the pipeline
+[The AI Engineering Bootcamp](https://aimakerspace.io/the-ai-engineering-bootcamp/) is an ever-evolving course that keeps pace with the industry.
 
-Section 2: PubMedAgent - PubMed E-utilities Integration
-Search PubMed using NCBI E-utilities API
-Retrieve medical literature abstracts
+If you're serious about becoming an AI-Assisted developer, you're in the right place.
 
-Section 3: TavilyAgent - Web Search Integration
-Web search using Tavily API
-Retrieve guidelines and resources
-
-Section 4: Merge + Re-rank - Combine and Rank Results
-Merge PubMed and Tavily results
-Re-rank using Cohere API (model: rerank-english-v3.0)
-Fallback to cosine similarity
-
-Section 5: MCQ Generation - Create Questions from Ranked Results
-Generate MCQs using OpenAI GPT-4o-mini
-Create stems, options, answers, and rationales
-
-Section 6: End-to-End Run - Complete Pipeline Execution
-Run complete pipeline from search to MCQ generation
-Display results summary
-
-Section 7: Chunk and Store - Vector Database Integration
-Chunk documents and store in Qdrant vector database
-Create embeddings using OpenAI
-Section 8: Mini Knowledge Graph - Regex-based Concept Extraction
-Extract medical concepts using regex patterns
-Build SQLite knowledge graph
-Link papers to concepts/objectives
-
-Section 9: Retrieval Integration - Semantic + Knowledge Graph
-Combine Qdrant semantic retrieval with KG lookup
-Merge contexts with token budgeting
-
-Section 10: Hierarchical Orchestration with LangGraph
-Multi-agent system with Supervisor and Researchers
-LangGraph workflow orchestration
-State management across agents
-
-Section 11: MCQ Rubric & Checks (Agent Node)
-Rule-based MCQ quality assessment
-Score clarity, relevance, distractor quality
-Validate single correct answer
-
-Section 12: RAGAS Evaluation (Qdrant-Grounded, Clean Rewrite)
-Evaluate pipeline using RAGAS framework
-Generate synthetic QA from Qdrant chunks
-Compute faithfulness, answer relevancy, context precision, context recall
-
-Section 13: Advanced Retrieval (Hybrid: Qdrant Dense + SQLite FTS5 Sparse with RRF)
-Hybrid retriever combining dense (Qdrant) and sparse (SQLite FTS5) search
-Reciprocal Rank Fusion (RRF) for result fusion
-Swappable retriever modes (dense vs hybrid_rrf)
-
-Section 14: Orchestration with Swappable Retriever (LangGraph)
-End-to-end pipeline using swappable retriever from Section 13
-Complete workflow with retriever mode selection
-Console summary and MCQ display
-
-Section 15: RAGAS Evaluation (Retriever Comparison Mode)
-Evaluate different retriever modes using RAGAS
-Compare dense vs hybrid retrieval performance
-Store metrics for comparison analysis
-
-## Comparing Retriever Performance (Dense vs Hybrid)
-
-To compare the performance of dense retrieval (Qdrant only) versus hybrid retrieval (Qdrant + SQLite FTS5 with RRF), follow these steps:
-
-1. **First Run - Dense Mode**: In Section 13, set `RETRIEVER_MODE = "dense"`, then run Sections 14-15. This will evaluate pure semantic retrieval using only Qdrant embeddings.
-
-2. **Second Run - Hybrid Mode**: In Section 13, change `RETRIEVER_MODE = "hybrid_rrf"`, then run Sections 14-15 again. This will evaluate the hybrid approach combining dense semantic search with sparse keyword matching.
-
-3. **Compare Results**: Section 15 automatically stores metrics in the `ragas_comparison` dictionary, allowing you to compare faithfulness, answer relevancy, context precision, and context recall between the two modes. The hybrid approach typically shows improved recall for exact medical terms while maintaining semantic understanding.
+With that, it's time to jump in and [🛣️ Get Started](https://www.notion.so/The-AI-Engineering-Bootcamp-Cohort-8-Home-Page-263cd547af3d80fc9986f25582348429?source=copy_link#263cd547af3d8115bfacfaba1915befa).
 
 
-Sections 13 – 15 · Hybrid Retrieval Flow
-User Query
-   │
-   ▼
-┌───────────────────────────────┐
-│ Hybrid Retrieval (Qdrant + FTS5 RRF + Cohere) │
-└───────────────────────────────┘
-   │
-   ▼
-[Same MCQ + RAGAS Pipeline]
+# 🏆 **Grading and Certification**
+
+To become **[AI-Makerspace Certified](https://aimakerspace.io/certification/)**, which will open you up to additional opportunities for full and part-time work within our community and network, you must:
+
+1. Complete all required project assignments, including weekly videos (Weeks 1-5, 7-8)
+2. Complete the Certification Challenge, including a Demo video (Week 6)
+3. Compete with other cohort members with a live pitch and Demd of your project during Demo Day Semifinals (November 11, 2025)
+4. If you are selected for Demo Day by your peers, you must present live on November 13, 2025. Otherwise, you will be required to submit your own YouTube-worthy Demo video
+5. Receive at least an 85% total grade in the course.
+
+If you do not complete the above requirements or maintain a high-quality standard of work, you may still be eligible for a *certificate of completion* if you miss no more than 2 live sessions.
+
+# 📚 About
+
+This GitHub repository is your gateway to mastering the art of AI Engineering.  ***All assignments for the course will be released here for your building, shipping, and sharing adventures!***
+
+# 🙏 Contributions
+
+We believe in the power of collaboration. Contributions, ideas, and feedback are highly encouraged! Let's build the ultimate resource for AI Engineering together.
+
+Please to reach out with any questions or suggestions. 
+
+Happy coding! 🚀🚀🚀
 
 
-```

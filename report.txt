@@ -1,0 +1,27 @@
+TASK DESCRIPTIONS
+Articulate problem, solution, audience
+Medical educators need a reliable way to generate high-quality, evidence-grounded MCQs at scale; today’s workflows are siloed (e.g., PubMed-only), manual, and weak on validation and provenance. The notebook frames this as a quality, coverage, and scalability gap for curriculum-aligned question banks.
+The proposed solution is a multi-agent, hierarchical RAG pipeline: PubMed and Tavily research agents feed a merge + re-rank stage, then chunking into Qdrant, with a tiny knowledge graph to guide MCQ stems/distractors and a rubric checker for QA. Primary audiences are clinician-educators and course teams who need fast, defensible MCQ creation with citations and rationales.
+
+Describing your data
+Two research streams are modelled: PubMed abstracts/notes and reputable web resources, both normalized into lightweight Doc containers and later chunked for storage. Chunks live in embedded Qdrant (dense vectors) and are cross-indexed with a small SQLite graph (concepts/relations) for control over distractor logic.
+Downstream artifacts include ranked document sets, generated MCQs (stem, options, key, rationale), and evaluation traces (rubric scores, RAGAS metrics). Each artifact keeps minimal provenance (source, chunk id) to make explanations and audits easy.
+
+Building an End-to-End Agentic RAG prototype
+The end-to-end path is: clarify objective → parallel research (PubMed + Tavily) → merge → re-rank → MCQ generation → rubric checks → store & retrieve. Orchestration uses a LangGraph-style supervisor so components stay swappable (e.g., different retrievers or LLMs).
+
+Creating a Golden Test Data Set
+The notebook builds a Qdrant-grounded golden set: synthesize Q&A pairs strictly from stored chunks, and attach explicit provenance to each example. Rules insist on no stubs, and to skip rather than fake when retrieval can’t support a question.
+This keeps the benchmark aligned with your actual retrieval corpus and prevents leakage from unseen sources. Because each gold item points back to a chunk, you can debug failures at the retrieval, ranking, or generation step cleanly.
+
+Install an advanced retriever of your choosing in our Agentic RAG application.
+An advanced hybrid retriever is included: dense (Qdrant/OpenAI embeddings) + sparse (SQLite FTS5) combined with Reciprocal Rank Fusion (RRF). You can toggle RETRIEVER_MODE to compare dense vs hybrid_rrf without touching the rest of the pipeline.
+The retriever API is centralized (retrieve_for_pipeline()), so swap-ins like multi-query, Cohere re-rank-first, or BM25 are trivial: implement, register a mode, and reuse the same interface. This keeps experiments surgical and reproducible.
+
+Assessing Performance
+Two layers evaluate quality: a rubric agent (clarity, relevance, distractor uniqueness, rationale match, single correct key) and RAGAS metrics (faithfulness, answer_relevancy, context_precision, context_recall). The notebook stores run-wise results in a simple ragas_comparison structure for side-by-side views.
+You’re encouraged to compare dense vs hybrid retrieval with identical questions, then inspect misses by tracing chunk provenance and rubric flags. If context_precision/recall sag while faithfulness holds, focus on retrieval; if faithfulness drops, fix generation/rationale constraints before tuning retrievers.
+
+Managing Your Boss and User Expectations
+Informed presentation with : (1) every MCQ is grounded in a cited chunk, (2) the system reports why an item passed/failed via rubric + RAGAS, and (3) retriever swaps are one-line toggles, so iteration is cheap. Also state limits: web keys or PubMed quotas can constrain coverage; when retrieval is empty, the system skips rather than hallucinate.
+Share a living dashboard (or the notebook tables) with: number of questions generated, pass rate on rubric, RAGAS deltas dense→hybrid, and top failure reasons. Framing progress as steady improvements in context recall and rubric pass-rate keeps stakeholders focused on measurable, reliable gains rather than “wow” demos.
