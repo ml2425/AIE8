@@ -25,3 +25,5 @@ You’re encouraged to compare dense vs hybrid retrieval with identical question
 Managing Your Boss and User Expectations
 Informed presentation with : (1) every MCQ is grounded in a cited chunk, (2) the system reports why an item passed/failed via rubric + RAGAS, and (3) retriever swaps are one-line toggles, so iteration is cheap. Also state limits: web keys or PubMed quotas can constrain coverage; when retrieval is empty, the system skips rather than hallucinate.
 Share a living dashboard (or the notebook tables) with: number of questions generated, pass rate on rubric, RAGAS deltas dense→hybrid, and top failure reasons. Framing progress as steady improvements in context recall and rubric pass-rate keeps stakeholders focused on measurable, reliable gains rather than “wow” demos.
+
+Video description at https://www.loom.com/share/a640e8e5cd39498582386b14b94de3c5
