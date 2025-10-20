@@ -57,3 +57,4 @@ samples/
 
 # uv
 .python-version
+test_config.py

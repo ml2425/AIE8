@@ -1,34 +1,38 @@
-Multiagent Notebook Section Summary
-Sections 0 - 12
-          ┌──────────────┐
-          │ PubMed / Tavily │
-          └──────┬─────────┘
-                 │
-        [Summarise & Chunk]
-                 │
-          ▼ Vectorize Text
-        ┌──────────────┐
-        │ Qdrant Store │
-        └──────────────┘
-                 │
-         ┌───────┴────────┐
-         │ Mini-KG (SQLite)│
-         └───────┬────────┘
-                 │
-     ┌───────────┼───────────┐
-     │ Retrieve & Rerank     │
-     │ (Qdrant + Cohere)     │
-     └───────────┼───────────┘
-                 │
-        ▼ Context to LLM
-   [MCQ / Answer Generation]
-                 │
-           ▼ Evaluation
-        ┌──────────────────────┐
-        │ RAGAS (Faith., Rel., │
-        │ Ctx Prec., Recall)  │
-        └──────────────────────┘
 
+#  Multi-Agent Notebook: Section Summary (0 – 15)
+
+##  High-Level Workflow
+
+```text
+┌──────────────┐
+│ PubMed / Tavily │
+└──────┬─────────┘
+       │
+ [Summarise & Chunk]
+       │
+       ▼
+ Vectorize Text
+       │
+┌──────────────┐
+│ Qdrant Store │
+└──────────────┘
+       │
+┌───────┴────────┐
+│ Mini-KG (SQLite) │
+└───────┬────────┘
+        │
+┌───────────┼───────────┐
+│ Retrieve & Rerank     │
+│ (Qdrant + Cohere)     │
+└───────────┼───────────┘
+        │
+        ▼
+ Context to LLM [MCQ / Answer Generation]
+        ▼
+┌──────────────────────┐
+│ RAGAS (Faith., Rel., │
+│ Ctx Prec., Recall)   │
+└──────────────────────┘
 
 Section 0: Config - Environment Setup
 Load API keys from .env file
@@ -112,16 +116,17 @@ To compare the performance of dense retrieval (Qdrant only) versus hybrid retrie
 
 3. **Compare Results**: Section 15 automatically stores metrics in the `ragas_comparison` dictionary, allowing you to compare faithfulness, answer relevancy, context precision, and context recall between the two modes. The hybrid approach typically shows improved recall for exact medical terms while maintaining semantic understanding.
 
-Sections 13 - 15
 
+Sections 13 – 15 · Hybrid Retrieval Flow
 User Query
    │
    ▼
-┌─────────────────────────────┐
-│ Hybrid Retrieval            │
-│ (Qdrant dense + SQLite FTS5 │
-│  fused via RRF + Cohere)    │
-└─────────────────────────────┘
+┌───────────────────────────────┐
+│ Hybrid Retrieval (Qdrant + FTS5 RRF + Cohere) │
+└───────────────────────────────┘
    │
    ▼
-[Same MCQ + RAGAS pipeline]
+[Same MCQ + RAGAS Pipeline]
+
+
+```
