@@ -92,6 +92,26 @@ class MCPAgent:
                     "extracted_params": {"notation": notation, "num_rolls": 1}
                 }
         
+        # Web search patterns
+        search_patterns = [
+            r"search\s+for\s+(.+)",  # "search for Python tutorials"
+            r"find\s+information\s+about\s+(.+)",  # "find information about climate change"
+            r"look\s+up\s+(.+)",  # "look up machine learning"
+            r"what\s+is\s+(.+)",  # "what is artificial intelligence"
+            r"tell\s+me\s+about\s+(.+)",  # "tell me about quantum computing"
+            r"search\s+(.+)",  # "search Python"
+        ]
+        
+        for pattern in search_patterns:
+            match = re.search(pattern, user_input)
+            if match:
+                query = match.group(1).strip()
+                return {
+                    **state,
+                    "intent": "search",
+                    "extracted_params": {"query": query}
+                }
+        
         # Default to unknown for now
         return {
             **state,
@@ -111,6 +131,9 @@ class MCPAgent:
                     tool_result = str(result)
                 elif intent == "dice":
                     result = await client.call_tool("roll_dice", params)
+                    tool_result = str(result)
+                elif intent == "search":
+                    result = await client.call_tool("web_search", params)
                     tool_result = str(result)
                 else:
                     tool_result = f"Unknown intent: {intent}"
@@ -165,6 +188,26 @@ class MCPAgent:
                     final_response = f"Dice roll: {tool_result}"
             except:
                 final_response = f"Dice roll: {tool_result}"
+        elif intent == "search":
+            # Extract web search result
+            try:
+                # Parse the CallToolResult to extract the actual content
+                if "result" in tool_result:
+                    # Extract the search result content
+                    start_idx = tool_result.find('"result": "') + 10
+                    end_idx = tool_result.find('"', start_idx)
+                    if start_idx > 9 and end_idx > start_idx:
+                        search_result = tool_result[start_idx:end_idx]
+                        # Truncate very long results
+                        if len(search_result) > 500:
+                            search_result = search_result[:500] + "..."
+                        final_response = f"Search results: {search_result}"
+                    else:
+                        final_response = f"Search results: {tool_result}"
+                else:
+                    final_response = f"Search results: {tool_result}"
+            except:
+                final_response = f"Search results: {tool_result}"
         else:
             final_response = tool_result
         
@@ -203,6 +246,13 @@ async def main():
     print(f"Query: {test_query2}")
     response2 = await agent.run(test_query2)
     print(f"Response: {response2}")
+    print()
+    
+    # Test web search query
+    test_query3 = "Search for Python tutorials"
+    print(f"Query: {test_query3}")
+    response3 = await agent.run(test_query3)
+    print(f"Response: {response3}")
 
 
 if __name__ == "__main__":
