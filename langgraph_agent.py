@@ -65,6 +65,33 @@ class MCPAgent:
                     "extracted_params": {"place": place}
                 }
         
+        # Dice rolling patterns
+        dice_patterns = [
+            r"roll\s+(\d+d\d+(?:k\d+)?)",  # "roll 3d6" or "roll 2d20k1"
+            r"(\d+d\d+(?:k\d+)?)",  # "3d6" or "2d20k1"
+            r"roll\s+(\d+)\s+dice",  # "roll 3 dice"
+            r"roll\s+(\d+)\s+six.sided",  # "roll 3 six-sided"
+            r"roll\s+(\d+)\s+d(\d+)",  # "roll 3 d6"
+        ]
+        
+        for pattern in dice_patterns:
+            match = re.search(pattern, user_input)
+            if match:
+                notation = match.group(1).strip()
+                # Convert common patterns to dice notation
+                if "dice" in notation or "six.sided" in notation:
+                    num_dice = notation.split()[0]
+                    notation = f"{num_dice}d6"
+                elif "d" in notation and not notation.startswith("d"):
+                    # Handle "3 d6" -> "3d6"
+                    notation = notation.replace(" ", "")
+                
+                return {
+                    **state,
+                    "intent": "dice",
+                    "extracted_params": {"notation": notation, "num_rolls": 1}
+                }
+        
         # Default to unknown for now
         return {
             **state,
@@ -81,6 +108,9 @@ class MCPAgent:
             async with Client("server.py") as client:
                 if intent == "weather":
                     result = await client.call_tool("weather_by_place", params)
+                    tool_result = str(result)
+                elif intent == "dice":
+                    result = await client.call_tool("roll_dice", params)
                     tool_result = str(result)
                 else:
                     tool_result = f"Unknown intent: {intent}"
@@ -118,6 +148,23 @@ class MCPAgent:
                     final_response = f"Weather data: {tool_result}"
             except:
                 final_response = f"Weather information: {tool_result}"
+        elif intent == "dice":
+            # Extract dice roll result
+            try:
+                # Parse the CallToolResult to extract the actual content
+                if "ROLLS:" in tool_result:
+                    # Extract the dice roll result
+                    start_idx = tool_result.find("ROLLS:") + 6
+                    end_idx = tool_result.find("', annotations=None")
+                    if start_idx > 5 and end_idx > start_idx:
+                        dice_result = tool_result[start_idx:end_idx].strip()
+                        final_response = f"Dice roll result: {dice_result}"
+                    else:
+                        final_response = f"Dice roll: {tool_result}"
+                else:
+                    final_response = f"Dice roll: {tool_result}"
+            except:
+                final_response = f"Dice roll: {tool_result}"
         else:
             final_response = tool_result
         
@@ -149,6 +196,13 @@ async def main():
     print(f"Query: {test_query}")
     response = await agent.run(test_query)
     print(f"Response: {response}")
+    print()
+    
+    # Test dice query
+    test_query2 = "Roll 3d6"
+    print(f"Query: {test_query2}")
+    response2 = await agent.run(test_query2)
+    print(f"Response: {response2}")
 
 
 if __name__ == "__main__":
