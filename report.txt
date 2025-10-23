@@ -1,34 +1,80 @@
-# LangGraph MCP Agent Implementation Report
+# LangGraph MCP Agent - Complete User Guide
 
-## Project Overview
-This project implements a natural language interface to MCP (Model Context Protocol) server tools using LangGraph. Users can interact with weather, dice rolling, and web search functionality through conversational queries via two access methods: CLI interactive mode and AI assistant integration.
+## 🚀 Quick Start
 
-## Architecture
+This project provides a **natural language interface** to MCP (Model Context Protocol) server tools. You can interact with weather, dice rolling, and web search functionality through conversational queries.
 
-### Core Components
-- **MCP Server** (`server.py`): Exposes tools via MCP protocol using stdio transport
-- **LangGraph Agent** (`langgraph_agent.py`): REGEX-based natural language processing and tool orchestration
-- **Business Logic**: Separate modules for weather (`services/geo_weather.py`) and dice rolling (`dice_roller.py`)
+### Prerequisites
+- Python 3.13+
+- Virtual environment activated
+- Tavily API key (for web search)
 
-### Data Flow
+### Installation
+```bash
+# Clone the repository
+git clone <repository-url>
+cd AIE8-MCP-Session
+
+# Activate virtual environment
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+
+# Install dependencies
+uv sync
 ```
-Method 1: User → CLI → LangGraph Agent → REGEX Classification → MCP Tool Call → Response
-Method 2: User → AI Assistant → LangGraph Agent → REGEX Classification → MCP Tool Call → Response
+
+### Environment Setup
+Create `.env` file:
+```env
+TAVILY_API_KEY=your_tavily_api_key_here
 ```
 
-## Access Methods
+## 📁 Project Structure
 
-### Method 1: CLI Interactive Mode
-**Usage**: Run `python langgraph_agent.py` for interactive conversation
-**Features**:
-- Direct command-line interaction
-- REGEX-based intent classification
-- Real-time MCP tool calling
-- Local execution only
-
-**Example Session**:
 ```
-$ python langgraph_agent.py
+AIE8-MCP-Session/
+├── server.py                 # MCP server with 5 tools
+├── langgraph_agent.py        # Interactive LangGraph agent
+├── test_server.py           # Basic MCP client testing
+├── dice_roller.py           # Dice rolling business logic
+├── dice_roller_numpy.py     # Alternative numpy implementation
+├── services/
+│   └── geo_weather.py       # Weather and geocoding services
+├── pyproject.toml           # Project dependencies
+├── uv.lock                 # Dependency lock file
+├── .venv/                  # Virtual environment
+└── report.txt              # This documentation
+```
+
+## 🛠️ Available Tools
+
+### MCP Server Tools (`server.py`)
+Your MCP server exposes **5 tools**:
+
+1. **`web_search`** - Search the web for information
+2. **`roll_dice`** - Roll dice with various notations
+3. **`geo_lookup`** - Convert place name to coordinates
+4. **`get_weather`** - Get weather for specific coordinates
+5. **`weather_by_place`** - One-call weather for any place name
+
+### LangGraph Agent Tools (`langgraph_agent.py`)
+The agent supports **3 tools** with natural language:
+
+1. **Weather** - Ask about weather in any city
+2. **Dice Rolling** - Roll dice with notation
+3. **Web Search** - Search the web for information
+
+## 🎯 How to Use
+
+### Method 1: Interactive LangGraph Agent (Recommended)
+
+**Start the interactive agent:**
+```bash
+python langgraph_agent.py
+```
+
+**Example session:**
+```
 LangGraph MCP Agent - Interactive Mode
 Ask me about weather, dice rolling, or web search!
 Type 'quit' to exit.
@@ -39,185 +85,58 @@ Agent: Weather information: Current weather: 14.4°C, wind 5.9 m/s (dir 47°), c
 You: Roll 2d20
 Agent: Dice roll result: 18, 7 -> RETURNS: 25
 
+You: Search for Python tutorials
+Agent: Search results: [multiple URLs and content]
+
 You: quit
+Goodbye!
 ```
 
-### Method 2: AI Assistant Integration
-**Usage**: Ask questions through AI assistant (like me) who calls the LangGraph agent
-**Features**:
-- Natural conversation interface
-- AI assistant handles technical details
-- Same REGEX-based classification
-- Conversational experience
+### Method 2: Direct MCP Server Access
 
-**Example Flow**:
-```
-User: "What's the weather in Paris?"
-AI Assistant: [calls LangGraph agent internally]
-Response: "Weather information: Current weather: 12.1°C, wind 26.7 m/s (dir 243°), code 61. Source: Open-Meteo."
-```
-
-## Transport Protocol
-
-### Current Implementation: stdio Transport
-- **Protocol**: Standard input/output communication
-- **Access**: Local process-to-process communication
-- **Security**: No network exposure, local only
-- **Integration**: Works with Cursor MCP integration
-- **Future Consideration**: HTTP transport for external access (not implemented)
-
-### stdio Transport Benefits
-- ✅ **Secure**: No network ports opened
-- ✅ **Fast**: Direct process communication
-- ✅ **Simple**: No configuration required
-- ✅ **Compatible**: Works with existing MCP tools
-
-## Available Tools
-
-### 1. Weather Tool (`weather_by_place`)
-**Purpose**: Get current weather information for any location
-**MCP Server Function**: `weather_by_place(place: str)`
-**Natural Language Patterns**:
-- "What's the weather in Paris?"
-- "How's the weather in Tokyo?"
-- "Temperature in London"
-- "Climate in New York"
-
-**Example Usage**:
-```
-Query: "What's the weather in Paris?"
-Response: "Weather information: Current weather: 12.1°C, wind 26.7 m/s (dir 243°), code 61. Source: Open-Meteo."
-```
-
-**Technical Details**:
-- Uses Nominatim for geocoding (no API key required)
-- Uses Open-Meteo for weather data (no API key required)
-- Returns temperature, wind speed, wind direction, and weather code
-
-### 2. Dice Rolling Tool (`roll_dice`)
-**Purpose**: Roll dice with various notations
-**MCP Server Function**: `roll_dice(notation: str, num_rolls: int = 1)`
-**Natural Language Patterns**:
-- "Roll 3d6"
-- "Roll 3 dice"
-- "Roll 2d20k1" (keep highest 1)
-- "Roll 4d6 and keep the highest 3"
-
-**Example Usage**:
-```
-Query: "Roll 3d6"
-Response: "Dice roll result: 6, 5, 4 -> RETURNS: 15"
-```
-
-**Technical Details**:
-- Supports standard dice notation (XdY)
-- Supports "keep highest" notation (XdYkZ)
-- Converts natural language to dice notation
-- Returns individual rolls and total
-
-### 3. Web Search Tool (`web_search`)
-**Purpose**: Search the web for information
-**MCP Server Function**: `web_search(query: str)`
-**Natural Language Patterns**:
-- "Search for Python tutorials"
-- "Find information about climate change"
-- "Look up machine learning"
-- "What is artificial intelligence?"
-- "Tell me about quantum computing"
-
-**Example Usage**:
-```
-Query: "Search for Python tutorials"
-Response: "Search results: [Returns multiple URLs with content snippets]"
-```
-
-**Technical Details**:
-- Uses Tavily API for web search
-- Returns multiple search results with URLs and content
-- Truncates very long results for readability
-
-## File Structure
-
-```
-AIE8-MCP-Session/
-├── server.py                 # MCP server with tool definitions
-├── langgraph_agent.py        # LangGraph agent implementation
-├── test_server.py           # Basic MCP client testing
-├── dice_roller.py           # Dice rolling business logic
-├── dice_roller_numpy.py     # Alternative numpy implementation
-├── services/
-│   └── geo_weather.py       # Weather and geocoding services
-├── pyproject.toml           # Project dependencies
-├── uv.lock                 # Dependency lock file
-├── .venv/                  # Virtual environment
-└── report.txt              # This documentation file
-```
-
-## Dependencies
-
-### Core Dependencies
-- **langgraph**: Graph-based agent framework
-- **fastmcp**: MCP client/server implementation
-- **tavily-python**: Web search API
-- **requests**: HTTP requests for weather APIs
-- **numpy**: Optional for dice rolling
-
-### API Requirements
-- **Tavily API Key**: Required for web search (set in .env)
-- **No API keys needed**: Weather and geocoding services are free
-
-## Usage Instructions
-
-### 1. Setup Environment
-```bash
-# Activate virtual environment
-.venv\Scripts\activate
-
-# Install dependencies (already done)
-uv sync
-```
-
-### 2. Configure Environment Variables
-Create `.env` file with:
-```
-TAVILY_API_KEY=your_tavily_api_key_here
-```
-
-### 3. Method 1: CLI Interactive Mode
-```bash
-python langgraph_agent.py
-```
-This starts an interactive session where you can ask questions directly.
-
-### 4. Method 2: AI Assistant Integration
-Ask questions through an AI assistant who will call the LangGraph agent internally:
-```python
-from langgraph_agent import MCPAgent
-import asyncio
-
-async def main():
-    agent = MCPAgent()
-    response = await agent.run("What's the weather in Tokyo?")
-    print(response)
-
-asyncio.run(main())
-```
-
-### 5. Direct MCP Server Access
-Access MCP tools directly without LangGraph agent:
+**Access MCP tools directly:**
 ```python
 from fastmcp import Client
 import asyncio
 
 async def direct_access():
     async with Client("server.py") as client:
+        # List available tools
+        tools = await client.list_tools()
+        print("Available tools:", [tool.name for tool in tools])
+        
+        # Call weather tool
         result = await client.call_tool("weather_by_place", {"place": "Paris"})
-        print(result)
+        print("Weather:", result)
+        
+        # Call dice tool
+        result = await client.call_tool("roll_dice", {"notation": "3d6", "num_rolls": 1})
+        print("Dice:", result)
 
 asyncio.run(direct_access())
 ```
 
-## Natural Language Examples
+### Method 3: Programmatic LangGraph Agent
+
+**Use the agent in your code:**
+```python
+from langgraph_agent import MCPAgent
+import asyncio
+
+async def use_agent():
+    agent = MCPAgent()
+    
+    # Ask questions programmatically
+    response = await agent.run("What's the weather in London?")
+    print(response)
+    
+    response = await agent.run("Roll 4d6")
+    print(response)
+
+asyncio.run(use_agent())
+```
+
+## 💬 Natural Language Examples
 
 ### Weather Queries
 - "What's the weather in Paris?"
@@ -237,13 +156,127 @@ asyncio.run(direct_access())
 - "Look up machine learning"
 - "What is artificial intelligence?"
 
-## Technical Implementation Details
+## 🔧 Technical Details
 
-### Intent Classification: REGEX-Based
-The agent uses regex patterns to classify user intents:
-- **Weather patterns**: `r"weather.*in\s+(\w+)"`, `r"what.*weather.*(\w+)"`
-- **Dice patterns**: `r"roll\s+(\d+d\d+(?:k\d+)?)"`, `r"(\d+d\d+(?:k\d+)?)"`
-- **Search patterns**: `r"search\s+for\s+(.+)"`, `r"what\s+is\s+(.+)"`
+### Architecture
+```
+User Input → LangGraph Agent → REGEX Classification → MCP Tool Call → Response Formatting
+```
+
+### Intent Classification (REGEX-based)
+The agent uses regex patterns to understand your queries:
+
+**Weather patterns:**
+- `r"weather.*in\s+(\w+)"` - "weather in Paris"
+- `r"what.*weather.*(\w+)"` - "what weather in Tokyo"
+
+**Dice patterns:**
+- `r"roll\s+(\d+d\d+(?:k\d+)?)"` - "roll 3d6"
+- `r"(\d+d\d+(?:k\d+)?)"` - "3d6"
+
+**Search patterns:**
+- `r"search\s+for\s+(.+)"` - "search for Python"
+- `r"what\s+is\s+(.+)"` - "what is AI"
+
+### MCP Integration
+- **Transport**: stdio (local process communication)
+- **Client**: `fastmcp.Client`
+- **Server**: `server.py` with FastMCP
+- **Tools**: 5 MCP tools available
+
+## 🚀 Getting Started Examples
+
+### Example 1: First Time User
+```bash
+# 1. Activate environment
+.venv\Scripts\activate
+
+# 2. Start interactive agent
+python langgraph_agent.py
+
+# 3. Try these commands:
+You: What's the weather in New York?
+You: Roll 1d20
+You: Search for machine learning
+You: quit
+```
+
+### Example 2: Developer Integration
+```python
+# Add to your Python project
+from langgraph_agent import MCPAgent
+import asyncio
+
+class MyApp:
+    def __init__(self):
+        self.agent = MCPAgent()
+    
+    async def handle_query(self, user_input):
+        return await self.agent.run(user_input)
+
+# Usage
+app = MyApp()
+result = await app.handle_query("What's the weather in Tokyo?")
+```
+
+### Example 3: Custom MCP Client
+```python
+# Direct MCP server access
+from fastmcp import Client
+import asyncio
+
+async def custom_client():
+    async with Client("server.py") as client:
+        # Get all available tools
+        tools = await client.list_tools()
+        for tool in tools:
+            print(f"Tool: {tool.name}")
+            print(f"Description: {tool.description}")
+            print(f"Parameters: {tool.inputSchema}")
+            print()
+        
+        # Use specific tools
+        weather = await client.call_tool("weather_by_place", {"place": "London"})
+        dice = await client.call_tool("roll_dice", {"notation": "2d6"})
+        search = await client.call_tool("web_search", {"query": "Python"})
+
+asyncio.run(custom_client())
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**1. ModuleNotFoundError: No module named 'fastmcp'**
+```bash
+# Solution: Activate virtual environment
+.venv\Scripts\activate
+```
+
+**2. Tavily API Key Error**
+```bash
+# Solution: Add API key to .env file
+echo "TAVILY_API_KEY=your_key_here" > .env
+```
+
+**3. Unknown Intent Response**
+```
+Agent: Unknown intent: unknown
+```
+**Solution**: Use supported query patterns (weather, dice, search)
+
+### Debug Mode
+```python
+# Enable debug logging
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Run agent with debug info
+agent = MCPAgent()
+response = await agent.run("What's the weather in Paris?")
+```
+
+## 📊 Performance
 
 ### REGEX vs LLM Comparison
 | Aspect | Current (REGEX) | LLM-Based |
@@ -252,69 +285,116 @@ The agent uses regex patterns to classify user intents:
 | **Cost** | ✅ Free | ❌ Costs money |
 | **Accuracy** | ⚠️ Limited patterns | ✅ More flexible |
 | **Maintenance** | ❌ Need to add patterns | ✅ Learns from examples |
-| **Dependencies** | ✅ Just regex | ❌ Need LLM API |
 
-### MCP Integration
-- Direct MCP client calls using `fastmcp.Client`
-- stdio transport for local communication
-- No additional adapters needed
-- Synchronous tool calls within async context
+### Response Times
+- **Weather queries**: ~2-3 seconds
+- **Dice rolling**: <1 second
+- **Web search**: ~3-5 seconds
 
-### Response Formatting
-- Extracts relevant content from MCP tool results
-- Formats responses for user readability
-- Handles different result types (weather, dice, search)
-- Truncates long search results for readability
+## 🔮 Future Enhancements
 
-## Future Enhancements
+### Planned Features
+1. **Tool listing** - "List available tools" command
+2. **Conversation memory** - Remember previous interactions
+3. **Tool chaining** - Combine multiple tools in one query
+4. **Better error handling** - More helpful error messages
+5. **HTTP transport** - External access capability
 
-### Potential Improvements
-1. **Conversation Memory**: Store previous interactions
-2. **Tool Chaining**: Combine multiple tools in one query
-3. **Better Intent Classification**: Use LLM-based classification
-4. **Error Handling**: More robust error messages
-5. **Response Templates**: More natural language responses
+### Extensibility
+The architecture is designed to easily add new tools:
 
-### Additional Tools
-- **File Operations**: Read/write files
-- **Database Queries**: Query databases
-- **API Integrations**: Connect to external APIs
-- **Math Operations**: Calculator functionality
+1. **Add tool to MCP server** (`server.py`)
+2. **Add regex patterns** (`classify_intent()`)
+3. **Add tool calling** (`call_mcp_tool()`)
+4. **Add response formatting** (`format_response()`)
 
-## Testing
+## 📚 API Reference
 
-### Manual Testing
-Test each tool individually:
-```bash
-# Test weather
-python -c "from langgraph_agent import MCPAgent; import asyncio; asyncio.run(MCPAgent().run('What is the weather in London?'))"
-
-# Test dice
-python -c "from langgraph_agent import MCPAgent; import asyncio; asyncio.run(MCPAgent().run('Roll 3d6'))"
-
-# Test search
-python -c "from langgraph_agent import MCPAgent; import asyncio; asyncio.run(MCPAgent().run('Search for Python tutorials'))"
+### MCPAgent Class
+```python
+class MCPAgent:
+    def __init__(self):
+        """Initialize the LangGraph agent"""
+    
+    async def run(self, user_input: str) -> str:
+        """Process user input and return response"""
+    
+    def classify_intent(self, state: AgentState) -> AgentState:
+        """Classify user intent using regex patterns"""
+    
+    async def call_mcp_tool(self, state: AgentState) -> AgentState:
+        """Call appropriate MCP tool based on intent"""
+    
+    def format_response(self, state: AgentState) -> AgentState:
+        """Format tool result for user display"""
 ```
 
-### Automated Testing
-The `test_server.py` file provides basic MCP server connectivity testing.
+### MCP Server Tools
+```python
+# Weather tools
+weather_by_place(place: str) -> dict
+get_weather(lat: float, lon: float, summarize: bool = True) -> dict
+geo_lookup(place: str) -> dict
 
-## Conclusion
+# Utility tools
+roll_dice(notation: str, num_rolls: int = 1) -> str
+web_search(query: str) -> str
+```
 
-This implementation successfully demonstrates:
-- **Dual access methods**: CLI interactive mode and AI assistant integration
-- **REGEX-based natural language processing** for fast, free intent classification
-- **stdio transport** for secure, local MCP communication
-- **Extensible architecture** for adding new tools
-- **Direct MCP integration** without additional adapters
-- **Multiple tool types** (weather, dice, search)
-- **Clean separation** of concerns (server, agent, business logic)
+## 🤝 Contributing
 
-### Current Status
-- ✅ **CLI Interactive Mode**: Ready for implementation
-- ✅ **AI Assistant Integration**: Working via stdio transport
-- ✅ **MCP Server**: Fully functional with 5 tools
-- ✅ **REGEX Classification**: Fast and reliable for defined patterns
-- ⚠️ **HTTP Transport**: Considered for future external access
+### Adding New Tools
+1. **Define tool in `server.py`**:
+```python
+@mcp.tool()
+def my_new_tool(param: str) -> str:
+    """Description of what the tool does"""
+    return "Tool result"
+```
 
-The agent provides flexible access to MCP server tools through natural language queries, supporting both direct CLI interaction and AI assistant integration without requiring direct API calls.
+2. **Add patterns to `langgraph_agent.py`**:
+```python
+# Add to classify_intent()
+my_tool_patterns = [
+    r"pattern.*for\s+(.+)",
+]
+
+for pattern in my_tool_patterns:
+    match = re.search(pattern, user_input)
+    if match:
+        return {
+            **state,
+            "intent": "my_tool",
+            "extracted_params": {"param": match.group(1)}
+        }
+```
+
+3. **Add tool calling**:
+```python
+# Add to call_mcp_tool()
+elif intent == "my_tool":
+    result = await client.call_tool("my_new_tool", params)
+    tool_result = str(result)
+```
+
+4. **Add response formatting**:
+```python
+# Add to format_response()
+elif intent == "my_tool":
+    final_response = f"My tool result: {tool_result}"
+```
+
+## 📄 License
+
+This project is part of the AI Makerspace MCP Session curriculum.
+
+## 🆘 Support
+
+For issues and questions:
+1. Check the troubleshooting section above
+2. Review the examples in this guide
+3. Test with the interactive agent: `python langgraph_agent.py`
+
+---
+
+**Happy coding! 🎉**

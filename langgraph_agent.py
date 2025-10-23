@@ -231,28 +231,21 @@ class MCPAgent:
 
 
 async def main():
-    """Test the agent"""
+    """Interactive agent session"""
     agent = MCPAgent()
     
-    # Test weather query
-    test_query = "What's the weather in Paris?"
-    print(f"Query: {test_query}")
-    response = await agent.run(test_query)
-    print(f"Response: {response}")
-    print()
+    print("LangGraph MCP Agent - Interactive Mode")
+    print("Ask me about weather, dice rolling, or web search!")
+    print("Type 'quit' to exit.\n")
     
-    # Test dice query
-    test_query2 = "Roll 3d6"
-    print(f"Query: {test_query2}")
-    response2 = await agent.run(test_query2)
-    print(f"Response: {response2}")
-    print()
-    
-    # Test web search query
-    test_query3 = "Search for Python tutorials"
-    print(f"Query: {test_query3}")
-    response3 = await agent.run(test_query3)
-    print(f"Response: {response3}")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'quit':
+            print("Goodbye!")
+            break
+        
+        response = await agent.run(user_input)
+        print(f"Agent: {response}\n")
 
 
 if __name__ == "__main__":
