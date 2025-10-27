@@ -43,14 +43,14 @@ def route_to_action_or_helpfulness(state: AgentState):
 def helpfulness_node(state: AgentState) -> Dict[str, Any]:
     """Evaluate helpfulness of the latest response relative to the initial query."""
     # If we've exceeded loop limit, short-circuit with END decision marker
-    if len(state["messages"]) > 10:
+    if len(state["messages"]) > 5:
         return {"messages": [AIMessage(content="HELPFULNESS:END")]}    
 
     initial_query = state["messages"][0]
     final_response = state["messages"][-1]
 
     prompt_template = """
-  Given an initial query and a final response, determine if the final response is extremely helpful or not. Please indicate helpfulness with a 'Y' and unhelpfulness as an 'N'.
+  Given an initial query and a final response, determine if the final response adequately addressess the initial query (Y/N). Please indicate helpfulness with a 'Y' and unhelpfulness as an 'N'.
 
   Initial Query:
   {initial_query}

@@ -39,18 +39,37 @@ Run the repository and complete the following:
 Compare the `agent` and `agent_helpful` assistants defined in `langgraph.json`. Where does the helpfulness evaluator fit in the graph, and under what condition should execution route back to the agent vs. terminate?
 
 ##### ✅ Answer:
-_(enter answer here)_
+agent_helpful has an additional helpfulnes evaluator node added to graph, compared to agent. After complete potential response helpfulness evaluate quality of response, may loop to generate better response before terminating. Agent_helpfulness has a maximum 10 loops, whereby will terminate. Agent assitant  will just terminate at first complete response. No assessment of response quality.
+
+Agent_helpfulness node comes after response
+agent → [tool_calls?] → action → agent [no tool_calls] → HELPFULNESS NODE 
+                                              ↓
+                                    [evaluates response]
+                                              ↓
+                            [HELPFULNESS:N] → agent (redo)
+                            [HELPFULNESS:Y] → END
+
 
 #### 🏗️ Activity #1 Debugging A Graph
 
-Select the `agent_with_helpfulness` and set one or more interrupts (at least one `Before` and one `After`). Try changing values and continuing the turn. 
+Select the `agent_with_helpfulness` and set one or more interrupts (at least one `Before` and one `After`). Try changing values and continuing the turn.
+If a response is unhelpful, agent_helful reruns the agent; otherwise it stops. The 10-message cap prevents infinite loops.
 
 #### ❓ Question 2:
-
 What are your thoughts on when you would use a Before interrupt vs. an After interrupt?
 
-##### ✅ Answer:
-_(enter answer here)_
+#####  Answer:
+### Interrupt BEFORE "agent" node
+1. Helps to check and validate input. 
+2. Data cleaning and preprocessing. 
+3. Check if we should even run (e.g., check loop count, initial query)
+
+### Interrupt AFTER "helpfulness" node
+1. Inspect if decision was "Y" or "N"
+2. Manually override the decision before routing
+3. Fix state if evaluator made wrong decision
+4. After interrupt is for post execution inspection / verity reulsts / error handling . 
+5. Another use case is to adjust outputs before passing to next node.
 
 
 
