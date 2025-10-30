@@ -87,6 +87,14 @@ Do this by creating a Simple Agent that can make API calls to the 🤖Agent Node
 What are the core components of an `AgentCard`?
 
 ##### ✅ Answer:
+Component	Purpose	Example / Analogy
+1. id / name	Unique identifier of the agent (URI, UUID, or handle).
+2. endpoint / a2a_endpoint	The URL or API route where the agent can be called.
+3. protocol / version	Specifies the A2A protocol version and message schema compatibility.	
+4. capabilities / methods	Declares which methods (tools) the agent can perform.
+5. schema / parameters	Describes expected input and output for each method (usually JSON Schema).
+6. metadata	Optional info: description, author, license, security settings.
+7. auth / token (optional)	If secure, may contain token or method for auth handshake.
 
 <br />
 
@@ -95,6 +103,7 @@ What are the core components of an `AgentCard`?
 Why is A2A (and other such protocols) important in your own words?
 
 ##### ✅ Answer:
+In situations where developer has no control on the agent side. Essentially we are using http server as interface between json-rpc protocol on agent side and langchain format on client side, commonly. 
 
 <br /><br />
 
