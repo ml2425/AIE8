@@ -39,5 +39,9 @@ Together offers serverless endpoints for embedding models, we'll be using the [B
 What is the difference between serverless and dedicated endpoints?
 
 #### ✅ Answer:
+Dedicated endpoints:
+Deducated server. More expensive. Pay for time the server is running even if not serving response or receiving requests. May be if very high high volume. Useful if need full control of a server.        
 
-_(insert your answer here)_
+
+Serverless endpoints:
+Pay per use. Do not get exclusive server. Cheaper when usage has low volumne load. No need to worry about shutting server down to end billing.

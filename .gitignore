@@ -1,3 +1,5 @@
 .DS_Store
 .env
 content/
+.venv/
+.ipynb_checkpoints/
